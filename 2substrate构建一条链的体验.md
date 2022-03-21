@@ -4,6 +4,26 @@
 ，并没有太大的不同。不过即使是这样，我们还是要罗嗦一下，快速的把这个过程走一边。
 
 ## 1 substrate开发环境
+### 1.1 准备环境
+编译substrate模板主要需要一些预编译包和Rust开发环境，安装的命令如下：
+```
+# 1.安装预编译包
+sudo apt update && sudo apt install -y git clang curl libssl-dev llvm libudev-dev
+
+# 2.安装Rust编译环境
+curl https://sh.rustup.rs -sSf | sh
+source ~/.cargo/env
+rustup default stable
+rustup update
+rustup update nightly
+rustup target add wasm32-unknown-unknown --toolchain nightly
+```
+执行完上述命令后，可以用如下命令进行查看：
+```
+rustc --version
+rustup show
+```
+
 
 ## 2 快速构建一条链
 
