@@ -20,6 +20,16 @@
 这种方式是最灵活的方式，但是也是难度最大的方式。这种方式可以忽略substrate中提供的frame，支持完全自定义的开发。这种方式后续在本教程中不加讨论。
 
 
-## 2 runtime是什么以及pallet开发的这种方式
+## 2 substrate链的架构
 
-最好是和其它链做类比
+既然我们主要是使用substrate构建运行时的方式开发，那么这样开发出来的链的架构是怎么样的呢？substrate官方文档已经给我们画出来了，如下：
+
+![substrate架构图](assets/substrate架构图.PNG)
+
+在这个架构中，已经给我们提供了基本的网络、rpc等这些模块，那么其它的应用逻辑模块就可以使用前面说的第二种方式进行开发，从而实现特定应用的特定的区块链。
+
+## 3 参考文档
+
+https://docs.substrate.io/v3/getting-started/overview/
+
+https://docs.substrate.io/v3/getting-started/architecture/
