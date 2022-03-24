@@ -1,4 +1,4 @@
-# 学习substrate的前置知识rust
+# 编写pallet的Rust前置知识
 
 ## rust中的trait介绍
 
