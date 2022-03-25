@@ -173,5 +173,7 @@ fn main() {
 ### 2.2 substrate的设计原理
 
 ## 3 参考文档
+
 https://course.rs/basic/trait/trait.html
+
 https://rust-book.junmajinlong.com/ch11/03_trait_inherite.html
