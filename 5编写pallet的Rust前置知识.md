@@ -171,9 +171,12 @@ fn main() {
 上述代码中，我们定义了Config trait，然后为Pallet实现了相应的trait，最后在main函数中使用了它。
 
 ### 2.2 substrate的设计原理
+我们可以想想一下
 
 ## 3 参考文档
 
 https://course.rs/basic/trait/trait.html
 
 https://rust-book.junmajinlong.com/ch11/03_trait_inherite.html
+
+https://zhuanlan.zhihu.com/p/79539782
