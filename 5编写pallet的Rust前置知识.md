@@ -171,7 +171,9 @@ fn main() {
 上述代码中，我们定义了Config trait，然后为Pallet实现了相应的trait，最后在main函数中使用了它。
 
 ### 2.2 substrate的设计原理
-我们可以想想一下
+substrate中的call、pallet、
+
+底层的东西已经给我们做好了，然后把所有的pallet自动加载，然后就行了
 
 ## 3 参考文档
 
