@@ -1,6 +1,6 @@
 # 编写简单的pallet
 ## 1 node-template的结构
-我们下载node-template（地址：https://github.com/substrate-developer-hub/substrate-node-template），然后进入到node-template查看目录结构：
+我们下载node-template（地址：https://github.com/substrate-developer-hub/substrate-node-template), 然后进入到node-template查看目录结构：
 ```
 ~/Source/learn/substrate-node-template$ tree -L 3
 .
@@ -40,10 +40,15 @@
 ```
 在上述的目录结构中，node目录中是链的一些基础功能的实现（或者说比较底层的实现，如网络、rpc，搭建链的最基础的code); pallet目录中放置的就是各个pallet，也就是业务相关的模块; runtime目录中可以简单理解为把所有pallet组合到一起，也就是业务相关的逻辑，这部分和pallet目录中是我们开发中经常要动到的部分，而node中则相对来说动的少一点。
 
-如果用一张图来展示它们之间的关系的话，可能是这样：
+如果用一张图来展示它们之间的关系的话，可能是这样(不太准确，但大体是这么个意思)：
 ![node-template关系](assets/node-template关系.PNG)
 
-## 2 编写pallet的一般格式
+当然，对于pallets来说，在runtime中使用的pallet，有些是我们自己开发的pallet，有些是substrate中已经开发好的pallet，甚至还有些是pallet是第三方开发的pallet。
+
+## 2 编写pallet 
+下面我们就开始写一个简单的pallet。
+
+### 2.1 编写pallet的一般格式
 
 写pallet的基本格式如下：
 ```
@@ -92,6 +97,9 @@ pub mod pallet {
 
 }
 ```
+
+### 2.2 编写pallet
+
 
 ## 3 将pallet添加到runtime中
 
