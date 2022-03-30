@@ -1,4 +1,4 @@
-# learn-substrate-easy
+# README
 
 一份方便入门的substrate pallet开发教程。
 
