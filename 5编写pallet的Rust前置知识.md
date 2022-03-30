@@ -108,9 +108,10 @@ fn main() {
 }
 ```
 
-## 2 substrate的设计原理
+## 2 一个例子
 
-### 2.1 一个例子
+下面我们来看一个Rust的例子：
+
 ```
 trait SystemConfig {
     fn system_configure(&self) {
@@ -170,10 +171,9 @@ fn main() {
 ```
 上述代码中，我们定义了Config trait，然后为Pallet实现了相应的trait，最后在main函数中使用了它。
 
-### 2.2 substrate的设计原理
-substrate中的call、pallet、
+为什么要写这个例子？因为我觉得这个例子对后续我们写pallet时，涉及到的一些类型能有很好的理解。
 
-底层的东西已经给我们做好了，然后把所有的pallet自动加载，然后就行了
+另外为了更好的理解后续的课程，可以读一读洋芋写的文章[深入理解substrate runtime](https://zhuanlan.zhihu.com/p/79539782)
 
 ## 3 参考文档
 
