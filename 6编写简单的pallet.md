@@ -156,7 +156,37 @@ repository = "https://github.com/substrate-developer-hub/substrate-node-template
     pub type Proofs<T: Config> =
         StorageMap<_, Blake2_128Concat, Vec<u8>, Vec<u8>), ValueQuery>;
 ```
+关于substrate中的存储，更详细的资料可以参考[文档](https://docs.substrate.io/v3/runtime/storage/)。这里我们简单解释一下，这部分就是在链上定义了一个存储，是一个key-value方式的存储结构，用于存储我们后面要使用的存证，key是Vec<u8>的格式，value也是Vec<u8>的格式。
 
+再接下来，我们修改注释5的部分如下：
+```
+    #[pallet::event]
+    #[pallet::generate_deposit(pub(super) fn deposit_event)]
+    pub enum Event<T: Config> {
+        ClaimCreated(Vec<u8>, Vec<u8>),
+    }
+```
+这里的Event是用来在我们具体的函数中做完动作之后发出的，一般用来通知前端做一些处理。这里我们在Event中定义了一个事件，就是创建存证。
+
+最后，我们修改注释7的部分来实现前面说的创建存证的逻辑，如下：
+```
+    #[pallet::call]
+    impl<T:Config> Pallet<T> { 
+        #[pallet::weight(0)]
+        pub fn create_claim(origin: OriginFor<T>, claim: Vec<u8>, account: Vec<u8>) -> DispatchResultWithPostInfo {
+            let sender = ensure_signed(origin)?;
+
+            Proofs::<T>::insert(
+                &claim,
+                &account,
+            );
+
+            Self::deposit_event(Event::ClaimCreated(account, claim));
+
+            Ok(().into())
+        }
+    }	
+```
 
 
 
