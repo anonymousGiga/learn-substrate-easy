@@ -195,7 +195,12 @@ repository = "https://github.com/substrate-developer-hub/substrate-node-template
 
 ## 3 将pallet添加到runtime中
 	
-接下来就是把pallet添加到runtime中使用。
+如果用开发一个程序来类别的话，上面写完我们的pallet就类似于我们开发好了一个库（或者说模块），但是这个库还没有真正的用在我们的程序中（链）。接下来就是要在链上使用，就要将pallet添加到runtime中。添加的过程也比较简单，这里我们分两步进行，分别是修改Cargo.toml中和runtime/src/lib.rs中。
+
+### 3.1 修改Cargo.toml
+	
+### 3.2 修改runtime/src/lib.rs
+	
 
 ## 4 调试使用pallet中的功能
 
