@@ -198,11 +198,70 @@ repository = "https://github.com/substrate-developer-hub/substrate-node-template
 如果用开发一个程序来类别的话，上面写完我们的pallet就类似于我们开发好了一个库（或者说模块），但是这个库还没有真正的用在我们的程序中（链）。接下来就是要在链上使用，就要将pallet添加到runtime中。添加的过程也比较简单，这里我们分两步进行，分别是修改Cargo.toml中和runtime/src/lib.rs中。
 
 ### 3.1 修改Cargo.toml
+要在runtime中使用我们上面编写的pallet，需要修改substrate-node-template/runtime/Cargo.toml，在其中添加依赖如下：
+```
+...
+[dependencies]
+...
+pallet-simple-pallet = { version = "4.0.0-dev", default-features = false, path = "../pallets/simple-pallet" } #我们上面编写的pallet
+...	
+
+[features]
+default = ["std"]
+std = [
+	...
+	"pallet-template/std",
+	"pallet-simple-pallet/std", #我们上面编写的pallet
+	...
+]
+```
 	
 ### 3.2 修改runtime/src/lib.rs
-	
+
+在runtime/src/lib.rs中来使用pallet。首先我们需要添加pallet的配置，其实就是指定pallet中Congfig中的关联类型，所以在substrate-node-template/runtime/src/lib.rs中添加如下代码：
+```
+impl pallet_simple_pallet::Config for Runtime {
+	type Event = Event;  //我们上面的定义中只有一个关联类型Event，在此处进行指定，等好右边的Event实际上是frame system中的Event，此处不需要深究，
+			     //可以理解为在runtime中已经定义好的一种具体的类型。
+}
+```
+接下来就是把simple_pallet加入到runtime中，修改如下代码：
+```
+construct_runtime!(
+	pub enum Runtime where
+		Block = Block,
+		NodeBlock = opaque::Block,
+		UncheckedExtrinsic = UncheckedExtrinsic
+	{
+		System: frame_system,
+		RandomnessCollectiveFlip: pallet_randomness_collective_flip,
+		Timestamp: pallet_timestamp,
+		Aura: pallet_aura,
+		Grandpa: pallet_grandpa,
+		Balances: pallet_balances,
+		TransactionPayment: pallet_transaction_payment,
+		Sudo: pallet_sudo,
+		// Include the custom logic from the pallet-template in the runtime.
+		TemplateModule: pallet_template,
+		SimplePallet: pallet_simple_pallet, //添加这一行，这里可以看出，实际上我们前面实现的simple-pallet可以理解为一种类型，
+						    //然后这里在runtime中定义了一个变量，该变量是这个pallet_simple_pallet类型
+	}
+);
+```
+至此，我们就将pallet加入到我们的runtime中了。
+
+### 3.3 编译运行
+接下来，我们可以进行编译运行我们的链了。回到substrate-node-template目录，运行如下命令编译：
+```
+cargo build
+```
+运行如下命令启动节点：
+```
+./target/debug/node-template --tmp --dev
+```
 
 ## 4 调试使用pallet中的功能
+此处我们使用polkadot-js-apps和我们刚才运行的节点进行交互。
 
 ## 5 参考文档
 https://docs.substrate.io/v3/runtime/frame/#pallets
