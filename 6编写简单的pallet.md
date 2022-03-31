@@ -127,6 +127,7 @@ rm benchmarking.rs mock.rs tests.rs
 接下来修改Cargo.toml，打开substrate-node-template/pallets/simple-pallet目录下的Cargo.toml文件，然后进行修改，主要修改内容如下：
 ```
 [package]
+name = "pallet-simple-pallet"  #需要修改成自己的名字，这里我们叫做pallet-simple-pallet
 ...
 description = 修改成自己的
 authors = 修改成自己的
@@ -137,9 +138,9 @@ repository = "https://github.com/substrate-developer-hub/substrate-node-template
 
 #### 2.2.3 编写代码
 
-删除substrate-node-template/pallets/simple-pallet/src/lib.rs中的代码，然后将上面2.1节中pallet的一般格式的代码拷贝到这个文件中。接下来我们开始写代码，首先对于注释中1和2的部分，我们不用修改，对于注释6的部分我们也需要删除掉（这个例子中使用不到）。
+删除substrate-node-template/pallets/simple-pallet/src/lib.rs中的代码，然后将上面2.1节中pallet的一般格式的代码拷贝到这个文件中。接下来我们开始写代码，首先对于注释中1和2的部分，我们开始不用修改，对于注释6的部分我们需要删除掉（这个例子中使用不到）。
 
-那么接下来，我们需要修改的就是里面的3、4、5、7的部分，其实对于很多其它的pallet来说，可能也只需要修改这几部分。
+那么接下来，我们需要修改的就是里面的3、4、5、7的部分，其实对于很多其它的pallet来说，主要也只是修改这几部分。
 
 首先，我们将注释3所在部分confit修改成如下：
 ```
@@ -152,18 +153,19 @@ repository = "https://github.com/substrate-developer-hub/substrate-node-template
 
 接下来，我们修改注释4的部分如下：
 ```
-    #[pallet::storage]
+ #[pallet::storage]
     pub type Proofs<T: Config> =
-        StorageMap<_, Blake2_128Concat, Vec<u8>, Vec<u8>), ValueQuery>;
+        StorageMap<_, Blake2_128Concat, u32, u128>;
 ```
-关于substrate中的存储，更详细的资料可以参考[文档](https://docs.substrate.io/v3/runtime/storage/)。这里我们简单解释一下，这部分就是在链上定义了一个存储，是一个key-value方式的存储结构，用于存储我们后面要使用的存证，key是Vec<u8>的格式，value也是Vec<u8>的格式。
+关于substrate中的存储，更详细的资料可以参考[文档](https://docs.substrate.io/v3/runtime/storage/)。这里我们简单解释一下，这部分就是在链上定义了一个存储，是一个key-value方式的存储结构，用于存储我们后面要使用的存证，key是u32格式，value也是u128格式。 
+	
 
 再接下来，我们修改注释5的部分如下：
 ```
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
-        ClaimCreated(Vec<u8>, Vec<u8>),
+        ClaimCreated(u32, u128),
     }
 ```
 这里的Event是用来在我们具体的函数中做完动作之后发出的，一般用来通知前端做一些处理。这里我们在Event中定义了一个事件，就是创建存证。
@@ -173,24 +175,27 @@ repository = "https://github.com/substrate-developer-hub/substrate-node-template
     #[pallet::call]
     impl<T:Config> Pallet<T> { 
         #[pallet::weight(0)]
-        pub fn create_claim(origin: OriginFor<T>, claim: Vec<u8>, account: Vec<u8>) -> DispatchResultWithPostInfo {
-            let sender = ensure_signed(origin)?;
+        pub fn create_claim(origin: OriginFor<T>, id: u32, claim: u128) -> DispatchResultWithPostInfo {
+            ensure_signed(origin)?;
 
             Proofs::<T>::insert(
+                &id,
                 &claim,
-                &account,
             );
 
-            Self::deposit_event(Event::ClaimCreated(account, claim));
+            Self::deposit_event(Event::ClaimCreated(id, claim));
 
             Ok(().into())
         }
-    }	
+    }
 ```
 
+至此，我们pallet部分的代码基本上就写完了。
 
 
 ## 3 将pallet添加到runtime中
+	
+接下来就是把pallet添加到runtime中使用。
 
 ## 4 调试使用pallet中的功能
 
