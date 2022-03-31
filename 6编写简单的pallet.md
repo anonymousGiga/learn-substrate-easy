@@ -110,6 +110,54 @@ pub mod pallet {
 1和2基本上是固定的写法，而对于后面的3-7部分，则是根据实际需要写或者不写。关于模板中每部分的解释，可以参考[文档](https://docs.substrate.io/v3/runtime/frame/#pallets).
 
 ### 2.2 编写pallet
+接下来我们将编写一个simple-pallet.
+
+#### 2.2.1 simple-pallet功能介绍
+simple-pallet是一个存证的pallet，简单说就是提供一个存取一段hash到链上的功能，和从链上读取的功能。
+
+#### 2.2.2 创建目录
+进去到我们前面下载的substrate-node-template中，进入到目录pallets中，我们可以创建我们自己的simple-pallet(一般都是在template基础上进行修改)：
+```
+#先进入到substrate-node-template目录，然后执行如下
+cd pallets
+cp template/ simple-pallet -rf
+cd simple-pallet/src/
+rm benchmarking.rs mock.rs tests.rs
+```
+接下来修改Cargo.toml，打开substrate-node-template/pallets/simple-pallet目录下的Cargo.toml文件，然后进行修改，主要修改内容如下：
+```
+[package]
+...
+description = 修改成自己的
+authors = 修改成自己的
+...
+repository = "https://github.com/substrate-developer-hub/substrate-node-template/"
+```
+对于这个文件中的其它的依赖我们可以暂时先不修改，等代码写完可以再回来删除多余的依赖。
+
+#### 2.2.3 编写代码
+
+删除substrate-node-template/pallets/simple-pallet/src/lib.rs中的代码，然后将上面2.1节中pallet的一般格式的代码拷贝到这个文件中。接下来我们开始写代码，首先对于注释中1和2的部分，我们不用修改，对于注释6的部分我们也需要删除掉（这个例子中使用不到）。
+
+那么接下来，我们需要修改的就是里面的3、4、5、7的部分，其实对于很多其它的pallet来说，可能也只需要修改这几部分。
+
+首先，我们将注释3所在部分confit修改成如下：
+```
+    #[pallet::config]
+	pub trait Config: frame_system::Config {
+        type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+    }
+```
+这里其实就是定义了一个关联类型，这个关联类型需要满足后面的类型约束（From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>）。至于为什么是这样的约束，我们其实可以从字面意思进行理解，一个是可以转换成Event，另外一个就是它是frame_system::Config的Event类型。**对于大部分pallet来说, 如果需要使用到Event，那么都需要在这个Config中进行定义，定义的方式基本一样.**
+
+接下来，我们修改注释4的部分如下：
+```
+    #[pallet::storage]
+    pub type Proofs<T: Config> =
+        StorageMap<_, Blake2_128Concat, Vec<u8>, Vec<u8>), ValueQuery>;
+```
+
+
 
 
 ## 3 将pallet添加到runtime中
