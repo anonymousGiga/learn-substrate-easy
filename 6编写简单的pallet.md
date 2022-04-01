@@ -261,7 +261,31 @@ cargo build
 ```
 
 ## 4 调试使用pallet中的功能
-此处我们使用polkadot-js-apps和我们刚才运行的节点进行交互。
+此处我们使用polkadot-js-apps和我们刚才运行的节点进行交互。步骤如下：
+```
+1、在浏览器中输入https://polkadot.js.org/apps；
+2、点击左上角会展开；
+3、在展开的菜单中点击DEVELOPMENT；
+4、点击Local Node；
+5、点击switch。
+```
+
+接下来我们创建存证：
+```
+1、选择Developer->Extrinsics->Submission;
+2、然后使用Alice账户，选择simplePallet，选择createClaim，输入对应的参数，然后点击右下角的提交即完成了存在的创建。
+```
+上述过程如下图：
+[创建存证](./assets/创建存证.PNG)
+
+最后我们可以来读取刚才创建的存证：
+```
+1、选择Developer->Chain State;
+2、选择simplePallet，选择proofs，然后点击提交即可。
+```
+上述过程如下图：
+[查看存证](./assets/查询存证.PNG)
+
 
 ## 5 参考文档
 https://docs.substrate.io/v3/runtime/frame/#pallets
