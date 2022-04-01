@@ -276,7 +276,7 @@ cargo build
 2、然后使用Alice账户，选择simplePallet，选择createClaim，输入对应的参数，然后点击右下角的提交即完成了存在的创建。
 ```
 上述过程如下图：
-[创建存证](./assets/创建存证.PNG)
+![创建存证](./assets/创建存证.PNG)
 
 最后我们可以来读取刚才创建的存证：
 ```
@@ -284,7 +284,7 @@ cargo build
 2、选择simplePallet，选择proofs，然后点击提交即可。
 ```
 上述过程如下图：
-[查看存证](./assets/查询存证.PNG)
+![查看存证](./assets/查询存证.PNG)
 
 
 ## 5 参考文档
