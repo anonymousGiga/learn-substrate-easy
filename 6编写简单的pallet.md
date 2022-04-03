@@ -293,3 +293,6 @@ cargo build
 	
 ## 6 参考文档
 https://docs.substrate.io/v3/runtime/frame/#pallets
+
+## 7 完整源码地址
+https://github.com/anonymousGiga/learn-substrate-easy-source/tree/main/substrate-node-template/pallets/simple-pallet
