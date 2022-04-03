@@ -21,6 +21,40 @@ pub mod pallet {
 
 
 ## 2 Pallet中的类型声明
+```
+ // 2. Declaration of the Pallet type
+    // This is a placeholder to implement traits and methods.
+    #[pallet::pallet]
+    #[pallet::generate_store(pub(super) trait Store)]
+    pub struct Pallet<T>(_);
+```
+接下来是Pallet类型声明，它是一系列trait和方法的拥有者，实际的作用类似于占位符。如果对这个还不理解的话，我们可以看如下Rust程序的例子：
+```
+trait MyTrait {
+    fn info(&self);
+}
+
+struct PlaceHolder(); //本身并没有字段
+
+impl PlaceHolder {
+    fn method(&self) {
+        println!("This is method.");
+    }
+}
+
+impl MyTrait for PlaceHolder {
+    fn info(&self) {
+        println!("This is info method.");
+    }
+}
+
+fn main() {
+    let p = PlaceHolder();
+    p.method();
+    p.info();
+}
+```
+所以在这部分中定义的```pub struct Pallet<T>(_)```就和上面的Rust例子中定义的```struct PlaceHolder();```作用一样，是method和info方法的主体。
 
 ## 3 Runtime配置trait
 
