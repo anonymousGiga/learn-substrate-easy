@@ -126,11 +126,23 @@ pub trait Hooks<BlockNumber> {
     fn integrity_test() { ... }
 }
 ```
-从函数名字上，我们也基本上可以判断出这些钩子函数什么时候执行。on_finalize是在区块finalize的时候执行
+从函数名字上，我们也基本上可以判断出这些钩子函数什么时候执行。on_finalize是在区块finalize的时候执行；on_idle是在on_finalize之前执行；on_initialize是在准备打包区块之前执行；on_runtime_upgrade是升级的时候执行；pre_upgrade是在升级之前执行；post_upgrade是在升级之后执行；offchain_worker在每个区块同步的时候执行。
 
 ## 7 交易
 
+Extrinsic则是可以从runtime外部可以调用的函数，也是pallet对外提供的逻辑功能。交易是放在如下部分：
+```
+    #[pallet::call]
+    impl<T:Config> Pallet<T> { 各种交易函数 }
+```
+
 ## 8 小结
+这这个章节中，我们对pallet的组成做了基本介绍，在写pallet的时候，基本上按照前面一章节中的模板，加上自己逻辑需要每个部分的修改，就可以完成自己的pallet。
 
 ## 9 参考文档
 https://kaisery.github.io/trpl-zh-cn/ch07-03-paths-for-referring-to-an-item-in-the-module-tree.html#%E4%BD%BF%E7%94%A8-pub-%E5%85%B3%E9%94%AE%E5%AD%97%E6%9A%B4%E9%9C%B2%E8%B7%AF%E5%BE%84
+
+https://docs.substrate.io/v3/runtime/storage/
+
+https://docs.substrate.io/v3/runtime/events-and-errors/
+
