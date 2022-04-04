@@ -110,9 +110,10 @@ pub enum Event<T: Config> {
     ValueSet(u32, T::AccountId),
 }
 ```
-
+在区块链写交易函数的时候，一般分为三步，分别是判断条件、修改状态、发出事件。例如我们上一节定义了```pub enum Event<T: Config> {ClaimCreated(u32, u128) }```事件，那么交易函数中就可以使用```Self::deposit_event(Event::ClaimCreated(id, claim));```发出事件。
 
 ## 6 钩子函数
+
 
 ## 7 交易
 
