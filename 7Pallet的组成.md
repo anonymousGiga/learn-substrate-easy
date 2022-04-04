@@ -113,7 +113,20 @@ pub enum Event<T: Config> {
 在区块链写交易函数的时候，一般分为三步，分别是判断条件、修改状态、发出事件。例如我们上一节定义了```pub enum Event<T: Config> {ClaimCreated(u32, u128) }```事件，那么交易函数中就可以使用```Self::deposit_event(Event::ClaimCreated(id, claim));```发出事件。
 
 ## 6 钩子函数
-
+钩子函数，是在区块链运行过程中希望固定执行的函数，例如我们希望在每个区块构建之前、之后的时候执行某些逻辑等，就可以把这些逻辑放在钩子函数中。钩子函数一共有：
+```
+pub trait Hooks<BlockNumber> {
+    fn on_finalize(_n: BlockNumber) { ... }
+    fn on_idle(_n: BlockNumber, _remaining_weight: Weight) -> Weight { ... }
+    fn on_initialize(_n: BlockNumber) -> Weight { ... }
+    fn on_runtime_upgrade() -> Weight { ... }
+    fn pre_upgrade() -> Result<(), &'static str> { ... }
+    fn post_upgrade() -> Result<(), &'static str> { ... }
+    fn offchain_worker(_n: BlockNumber) { ... }
+    fn integrity_test() { ... }
+}
+```
+从函数名字上，我们也基本上可以判断出这些钩子函数什么时候执行。on_finalize是在区块finalize的时候执行
 
 ## 7 交易
 
