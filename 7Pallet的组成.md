@@ -79,9 +79,29 @@ fn main() {
 对于Config中的类型，我们可以在我们整个Pallet中使用，使用的方式就是T::类型名/常量名。例如此处定义的Id，我们使用时就是T::Id。
 
 ## 4 存储
+存储（Storage）允许我们在链上存储数据，使用它存储的数据可以通过Runtime进行访问。substrate提供了四种存储方式，分别是：
 
+* Storage Value
+* Storage Map
+* Storage Double Map
+* Storage N MAp
+
+从字面意思，我们基本上也可以看出几种存储的区别，StorageValue是存储单个的值，StorageMap是以map的方式存储（key-value）,StorageDoubleMap则是以双键的方式存储（就是两个key对应value的方式），StorageNMap则是N个key的方式。
+
+关于存储的介绍可以参考[官方文档](https://docs.substrate.io/v3/runtime/storage/)
+
+定义存储通常的方式如下：
+```
+#[pallet::storage]
+pub type MyStorageValue<T: Config> = StorageValue<_, u32, ValueQuery>;
+
+#[pallet::storage]
+pub type MyStorageMap<T: Config> = StorageMap<_, Twox64Concat, u32, u32, ValueQuery>;
+```
+首先是需要添加#[pallet::storage]宏，然后使用pub type 存储名 = 某种存储类型<...>。至于尖括号里面具体填的东西，可以看Storage的Rust文档，如StorageMap就可以参考[这里](https://docs.substrate.io/rustdocs/latest/frame_support/storage/types/struct.StorageMap.html)
 
 ## 5 事件
+
 
 ## 6 钩子函数
 
