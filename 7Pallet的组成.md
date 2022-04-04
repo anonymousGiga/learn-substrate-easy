@@ -57,8 +57,29 @@ fn main() {
 所以在这部分中定义的```pub struct Pallet<T>(_)```就和上面的Rust例子中定义的```struct PlaceHolder();```作用一样，是method和info方法的主体。
 
 ## 3 Runtime配置trait
+这部分是指定Runtime的配置trait，Pallet中使用的一些类型和常量在此trait中进行配置。通常的使用方式如下：
+```
+    #[pallet::config]
+    pub trait Config: frame_system::Config {
+        type Id: Member
+			+ Parameter
+			+ AtLeast32BitUnsigned
+			+ Codec
+			+ Copy
+			+ Debug
+			+ Default
+			+ MaybeSerializeDeserialize;
+            
+        #[pallet::constant]
+		type Limit: Get<u32>;
+    }
+```
+例如我们这里定义了一个类型Id以及一个常量Limit，定义的格式就是```type 类型名/常量名: trait约束 ```，不同的是常量名字上面会加上```#[pallet::constant]```。此处定义的类型以及常量，会在runtime中（就是代码runtime/src/lib.rs中）使用时，会指定具体的类型。
+
+对于Config中的类型，我们可以在我们整个Pallet中使用，使用的方式就是T::类型名/常量名。例如此处定义的Id，我们使用时就是T::Id。
 
 ## 4 存储
+
 
 ## 5 事件
 
