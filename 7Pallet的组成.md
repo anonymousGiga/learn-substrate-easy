@@ -101,6 +101,15 @@ pub type MyStorageMap<T: Config> = StorageMap<_, Twox64Concat, u32, u32, ValueQu
 首先是需要添加#[pallet::storage]宏，然后使用pub type 存储名 = 某种存储类型<...>。至于尖括号里面具体填的东西，可以看Storage的Rust文档，如StorageMap就可以参考[这里](https://docs.substrate.io/rustdocs/latest/frame_support/storage/types/struct.StorageMap.html)
 
 ## 5 事件
+当pallet需要把运行时上的更改或变化通知给外部主体时，就需要用到事件。事件是一个枚举类型，如下：
+```
+#[pallet::event]
+#[pallet::metadata(u32 = "Metadata")]
+pub enum Event<T: Config> {
+    /// Set a value.
+    ValueSet(u32, T::AccountId),
+}
+```
 
 
 ## 6 钩子函数
