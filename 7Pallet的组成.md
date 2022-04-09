@@ -84,7 +84,7 @@ fn main() {
 * Storage Value
 * Storage Map
 * Storage Double Map
-* Storage N MAp
+* Storage N Map
 
 从字面意思，我们基本上也可以看出几种存储的区别，StorageValue是存储单个的值，StorageMap是以map的方式存储（key-value）,StorageDoubleMap则是以双键的方式存储（就是两个key对应value的方式），StorageNMap则是N个key的方式。
 
