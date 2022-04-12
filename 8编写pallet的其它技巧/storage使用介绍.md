@@ -30,6 +30,6 @@
 * 而第四行中的$StorageType则是具体的storage类型（也就是StorageValue\StorageMap\StorageDoubleMap\StorageNMap中的一种），接着的尖括号中的第一个参数```$generic_name = $some_generics```主要用来生产storage的前缀（有兴趣的小伙伴可以深入研究下，可能和底层存储有关），在具体使用中一般都使用```_```即可,尖括号中从第二个参数起，就和具体的Storage类型相关，需要参见具体的Storage类型。
 
 # 使用示例
-下面我们再来使用示例
+下面我们就来用一个例子演示一下各种存储。我们假定有这样一个应用，记录某个年纪各个寝室每个床位的学生姓名，我们将分别使用StorageValue\StorageMap\StorageDoubleMap集中存储类型。
 
 
