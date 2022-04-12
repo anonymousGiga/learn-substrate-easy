@@ -3,4 +3,12 @@
 
 首先我们来讲讲对storage的理解。第一次接触substrate的时候，和容易让人把storage和其它区块链架构中的storage（持久化存储）混淆。在其它的区块链中，如ethereum或者bitcoin中，节点对区块链相关的数据使用leveldb这样的数据库进行持久化存储，substrate中也有些持久化存储。但是，这些持久化存储不是我们本节要说的我们在pallet中使用的storage。**在pallet中要使用的storage更多的其实是一个应用层的概念**，如果用城市建造来类比，持久化存储就像是整个城市的马路或者是管道，而我们谈论的storage则是某个具体建筑或者房屋里面的水管会小路，至于这些小水管（或小路）是怎么和整个城市的大路联系起来的，不是我们讨论的范围。
 
-# 
+# storage的使用方式
+前面我们在pallet的组成中介绍过storage的使用方式，但是这里我们既然是重新来讲这部分，那肯定要讲的深入一点。这里我们把[substrate官方文档](https://docs.substrate.io/rustdocs/latest/frame_support/attr.pallet.html#storage-palletstorage-optional)中的使用方式拿过来，然后逐个讲解：
+```
+1 #[pallet::storage]
+2 #[pallet::getter(fn $getter_name)] // optional
+3 $vis type $StorageName<$some_generic> $optional_where_clause
+	  = $StorageType<$generic_name = $some_generics, $other_name = $some_other, ...>;
+```
+
