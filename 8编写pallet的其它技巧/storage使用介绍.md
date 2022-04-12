@@ -20,7 +20,7 @@
 	#[pallet::getter(fn my_id)]
 	pub type MyId<T: Config> = StorageValue<_, u8, ValueQuery>;
 	```
- 这里我定义了一个存储MyId，就自动为其生成了getter函数，函数名字是my_id，后续可以在pallet使用my_id()函数来获取该Storage中存储的值。
+        这里我定义了一个存储MyId，就自动为其生成了getter函数，函数名字是my_id，后续可以在pallet使用my_id()函数来获取该Storage中存储的值。
 * 第三行和第四行就是真正定义Storage。定义的格式一定是$vis type开头（其中$vis是public、或者无这些范围修饰符，也就是表示其在代码中的使用范围）。接下来的$StorageName就是存储的名字，然后紧接着的尖括号中的$some_generic是泛型类型，而$optional_where_clause是对应泛型类型的约束。所以，上面那个例子我们也可以定义成这样：
 	```
 	#[pallet::storage]
@@ -29,5 +29,7 @@
 	```
 * 而第四行中的$StorageType则是具体的storage类型（也就是StorageValue\StorageMap\StorageDoubleMap\StorageNMap中的一种），接着的尖括号中的第一个参数```$generic_name = $some_generics```主要用来生产storage的前缀（有兴趣的小伙伴可以深入研究下，可能和底层存储有关），在具体使用中一般都使用```_```即可,尖括号中从第二个参数起，就和具体的Storage类型相关，需要参见具体的Storage类型。
 
-# 
+# 使用示例
+下面我们再来使用示例
+
 
