@@ -21,6 +21,7 @@
 	#[pallet::getter(fn my_id)]
 	pub type MyId<T: Config> = StorageValue<_, u8, ValueQuery>;
 	```
+	
         这里我定义了一个存储MyId，就自动为其生成了getter函数，函数名字是my_id，后续可以在pallet使用my_id()函数来获取该Storage中存储的值。
 * 第三行和第四行就是真正定义Storage。定义的格式一定是$vis type开头（其中$vis是public、或者无这些范围修饰符，也就是表示其在代码中的使用范围）。接下来的$StorageName就是存储的名字，然后紧接着的尖括号中的$some_generic是泛型类型，而$optional_where_clause是对应泛型类型的约束。所以，上面那个例子我们也可以定义成这样：
 	```
