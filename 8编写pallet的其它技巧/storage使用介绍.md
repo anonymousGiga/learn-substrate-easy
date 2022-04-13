@@ -1,9 +1,10 @@
-# 1 storage使用介绍
+# storage使用介绍
+
 最开始的时候本来没准备介绍这一章节，觉得storage直接看官方文档就好，但是和身边的小伙伴交流，觉得还是应该讲一下，毕竟这部分是在pallet时经常会使用到的部分。
 
 首先我们来讲讲对storage的理解。第一次接触substrate的时候，和容易让人把storage和其它区块链架构中的storage（持久化存储）混淆。在其它的区块链中，如ethereum或者bitcoin中，节点对区块链相关的数据使用leveldb这样的数据库进行持久化存储，substrate中也有些持久化存储。但是，这些持久化存储不是我们本节要说的我们在pallet中使用的storage。**在pallet中要使用的storage更多的其实是一个应用层的概念**，如果用城市建造来类比，持久化存储就像是整个城市的马路或者是管道，而我们谈论的storage则是某个具体建筑或者房屋里面的水管会小路，至于这些小水管（或小路）是怎么和整个城市的大路联系起来的，不是我们讨论的范围。
 
-# 2 storage的使用方式
+# 1 storage的使用方式
 前面我们在pallet的组成中介绍过storage的使用方式，但是这里我们既然是重新来讲这部分，那肯定要讲的深入一点。这里我们把[substrate官方文档](https://docs.substrate.io/rustdocs/latest/frame_support/attr.pallet.html#storage-palletstorage-optional)中的使用方式拿过来，然后逐个讲解：
 ```
 1 #[pallet::storage]
@@ -30,10 +31,10 @@
    这里我们使用了ValueQuery，表示为查询值实现了QueryKindTrait，具体的此处不展开，可以[查阅文档]（https://paritytech.github.io/substrate/master/frame_support/storage/types/struct.ValueQuery.html）。
 * 而第四行中的$StorageType则是具体的storage类型（也就是StorageValue\StorageMap\StorageDoubleMap\StorageNMap中的一种），接着的尖括号中的第一个参数```$generic_name = $some_generics```主要用来生产storage的前缀（有兴趣的小伙伴可以深入研究下，可能和底层存储有关），在具体使用中一般都使用```_```即可,尖括号中从第二个参数起，就和具体的Storage类型相关，需要参见具体的Storage类型。
 
-# 3 使用示例
+# 2 使用示例
 下面我们就来用一个例子演示一下各种存储。我们假定有这样一个应用，记录某个年纪各个寝室每个床位的学生姓名，我们将分别使用StorageValue\StorageMap\StorageDoubleMap几种存储类型。在此例子中，我们将重新写一个pallet，其过程和前面我们讲到的实现简单的pallet中的过程一样，后续我们的示例也都是这样的过程。本节我们还是复习一下创建pallet以及加载的过程，但是在后面的例子中，如非必要，我们将只写pallet部分的代码，在runtime中使用pallet我们将不重复赘述。
 
-## 3.1 创建pallet
+## 2.1 创建pallet
 我们还是在之前的substrate-node-template中进行。
 
 * 拷贝template，过程如下：
@@ -51,7 +52,7 @@
 * 添加模板
   
   接下来我们将substrate-node-template/pallets/use-storage/src/lib.rs中的内容完全删掉，然后拷贝[模板](https://docs.substrate.io/v3/runtime/frame/)到这个文件中。
-## 3.2 编写pallet中的逻辑
+## 2.2 编写pallet中的逻辑
   然后我们在pallet中定义三个存储，分别用来存储班级、学生、寝室的信息，分别如下：
   ```
   	// 4. Runtime Storage
@@ -138,7 +139,7 @@ pub fn set_dorm_info(
 
 基本上都是判断发起交易者的权限，然后设置信息、发出事件这样的过程，整个pallet完整的代码可以参考[这里](https://github.com/anonymousGiga/learn-substrate-easy-source/blob/main/substrate-node-template/pallets/use-storage/src/lib.rs).
 
-## 3.3 在runtime中使用
+## 2.3 在runtime中使用
 
 写完pallet后，我们就可以将pallet添加到runtime中。
 
@@ -190,7 +191,7 @@ construct_runtime!(
 
 ```
 
-## 3.4 编译&运行
+## 2.4 编译&运行
 
 回到substrate-node-template目录，执行如下编译：
 ```
@@ -202,7 +203,7 @@ cargo build
 ./target/debug/node-template --dev
 ```
 
-## 3.5 使用前端进行交互
+## 2.5 使用前端进行交互
 
 我们可以用polkadot-js-app进行交互，在浏览器中输入https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#
 
@@ -217,7 +218,7 @@ cargo build
 小伙伴们可以再查一下学生信息和班级信息。
 
 
-# 4 参考文档
+# 3 参考文档
 
 https://docs.substrate.io/rustdocs/latest/frame_support/attr.pallet.html#storage-palletstorage-optional
 
@@ -225,7 +226,7 @@ https://paritytech.github.io/substrate/master/frame_support/storage/types/index.
 
 https://paritytech.github.io/substrate/master/frame_support/storage/types/struct.ValueQuery.html
 
-# 5 示例完整代码
+# 4 示例完整代码
 
 https://github.com/anonymousGiga/learn-substrate-easy-source/tree/main/substrate-node-template/pallets/use-storage
 
