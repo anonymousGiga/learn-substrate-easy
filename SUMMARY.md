@@ -12,5 +12,5 @@
     * [8.3 写交易函数的套路](8.3写交易函数的套路.md)
     * [8.4 pallet中的类型转换](8.4pallet中的类型转换.md)
     * [8.5 在pallet中使用OCW](8.5在pallet中使用OCW.md)
-* 测试
-* benchmarking
+* 9 测试
+* 10 benchmarking
