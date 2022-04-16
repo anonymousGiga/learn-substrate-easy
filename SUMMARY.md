@@ -11,6 +11,7 @@
     * [8.2 Error类型的使用](8.2Error类型的使用.md)
     * [8.3 写交易函数的套路](8.3写交易函数的套路.md)
     * [8.4 pallet中的类型转换](8.4pallet中的类型转换.md)
-    * [8.5 在pallet中使用OCW](8.5在pallet中使用OCW.md)
+    * [8.5 在pallet中添加rpc接口](8.5在pallet中添加rpc接口.md)
+    * [8.6 在pallet中使用OCW](8.6在pallet中使用OCW.md)
 * 9 测试
 * 10 benchmarking
