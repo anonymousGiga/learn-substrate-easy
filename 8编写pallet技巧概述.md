@@ -1,7 +1,7 @@
 本节开始，我们讲解编写pallet的一些技巧，主要分为以下部分：
 * [storage（链上）各个类型使用](8.1storage使用介绍.md);
 * [Error类型的使用](8.2Error类型的使用.md);
-* 实现交易函数的讨论；
+* [写调度函数的套路](8.3写调度函数的套路.md)；
 * pallet中的类型转换；
 *  [在pallet中使用链下工作者（Offchain worker）](8.5在pallet中使用OCW.md)；
 * 在pallet的ocw中使用链下存储（offchain storage）；
