@@ -7,3 +7,9 @@
 * 编写mock runtime;
 * 编写pallet的genesisconfig;
 * 编写测试。
+
+# 1 编写mock runtime
+
+# 2 设置genesisconfig
+
+# 3 编写测试函数
