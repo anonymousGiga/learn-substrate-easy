@@ -18,3 +18,7 @@
 ## 3.2 在测试函数中使用pallet的存储
 
 ## 3.3 测试覆盖的一般套路
+
+# 4 参考资料
+
+https://docs.substrate.io/v3/runtime/testing/
