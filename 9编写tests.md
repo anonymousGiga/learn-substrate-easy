@@ -213,11 +213,15 @@ fn test_set_class_info() {
 	});
 }
 ```
-* 在测试函数中调用pallet的函数:
-	
+* 在测试函数中调用pallet的函数，方式如下:
+       在mock runtime中定义的模块名字::函数名字（函数参数）
 
-* 在测试函数中使用pallet的存储:
-
+* 在测试函数中使用pallet的存储，方式如下:
+    1、导出pallet中存储，如上面例子中使用```use super::pallet::Class;``` 导出存储Class；
+    2、像正常在pallet中使用存储一样使用。
+    
+# 4 运行测试
+进入到对应的pallet中，运行```cargo test```即可。
 
 
 # 4 参考资料
