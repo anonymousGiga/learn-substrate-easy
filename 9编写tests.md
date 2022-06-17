@@ -224,6 +224,6 @@ fn test_set_class_info() {
 进入到对应的pallet中，运行```cargo test```即可。
 
 
-# 4 参考资料
+# 5 参考资料
 
 https://docs.substrate.io/v3/runtime/testing/
