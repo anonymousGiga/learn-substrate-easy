@@ -197,13 +197,28 @@ mod mock;
 ```
 
 # 3 编写测试函数
+mock runtime准备好后就可以写测试函数了，我们在use-test/src目录下创建一个tests.rs的文件，添加测试函数的代码：
+```
+use super::pallet::Class;
+use crate::mock::*;
+use frame_support::{assert_noop, assert_ok};
+use sp_runtime::traits::BadOrigin;
+
+#[test]
+fn test_set_class_info() {
+	new_test_ext().execute_with(|| {
+		assert_noop!(UseTestDemo::set_class_info(Origin::signed(1), 42), BadOrigin);
+		assert_ok!(UseTestDemo::set_class_info(Origin::root(), 42));
+		assert_eq!(Class::<Test>::get(), 42);
+	});
+}
+```
+* 在测试函数中调用pallet的函数:
+	
+
+* 在测试函数中使用pallet的存储:
 
 
-## 3.1 在测试函数中调用pallet的函数
-
-## 3.2 在测试函数中使用pallet的存储
-
-## 3.3 测试覆盖的一般套路
 
 # 4 参考资料
 
