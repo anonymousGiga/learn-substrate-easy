@@ -23,7 +23,10 @@ mod tests;
 pub use pallet::*;
 #[frame_support::pallet]
 pub mod pallet {
-	use frame_support::pallet_prelude::*;
+	use codec::Codec;
+	use frame_support::{
+		pallet_prelude::*, sp_runtime::traits::AtLeast32BitUnsigned, sp_std::fmt::Debug,
+	};
 	use frame_system::pallet_prelude::*;
 
 	// 2. Declaration of the Pallet type
@@ -39,50 +42,48 @@ pub mod pallet {
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type ClassType: Member
+			+ Parameter
+			+ AtLeast32BitUnsigned
+			+ Codec
+			+ Copy
+			+ Debug
+			+ Default
+			+ MaxEncodedLen
+			+ MaybeSerializeDeserialize;
 	}
 
 	// 4. Runtime Storage
 	// use storageValue store class.
 	#[pallet::storage]
 	#[pallet::getter(fn my_class)]
-	pub type Class<T: Config> = StorageValue<_, u32, ValueQuery>;
-
-	// use storageMap store (student number -> student name).
-	#[pallet::storage]
-	#[pallet::getter(fn students_info)]
-	pub type StudentsInfo<T: Config> = StorageMap<_, Blake2_128Concat, u32, u128, ValueQuery>;
-
-	#[pallet::storage]
-	#[pallet::getter(fn dorm_info)]
-	pub type DormInfo<T: Config> = StorageDoubleMap<
-		_,
-		Blake2_128Concat,
-		u32, //dorm number
-		Blake2_128Concat,
-		u32, //bed number
-		u32, // student number
-		ValueQuery,
-	>;
+	pub type Class<T: Config> = StorageValue<_, T::ClassType, ValueQuery>;
 
 	// 5. Runtime Events
 	// Can stringify event types to metadata.
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
-		SetClass(u32),
-		SetStudentInfo(u32, u128),
-		SetDormInfo(u32, u32, u32),
+		SetClass(T::ClassType),
 	}
 
-	// 8. Runtime Errors
-	#[pallet::error]
-	pub enum Error<T> {
-		// Class 只允许设置一次
-		SetClassDuplicate,
-		// 相同学号的只允许设置一次名字
-		SetStudentsInfoDuplicate,
-		// 相同床位只允许设置一次
-		SetDormInfoDuplicate,
+	#[pallet::genesis_config]
+	pub struct GenesisConfig<T: Config> {
+		pub class: T::ClassType,
+	}
+
+	#[cfg(feature = "std")]
+	impl<T: Config> Default for GenesisConfig<T> {
+		fn default() -> Self {
+			Self { class: Default::default() }
+		}
+	}
+
+	#[pallet::genesis_build]
+	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
+		fn build(&self) {
+			Class::<T>::put(self.class);
+		}
 	}
 
 	// 7. Extrinsics
@@ -90,57 +91,20 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		#[pallet::weight(0)]
-		pub fn set_class_info(origin: OriginFor<T>, class: u32) -> DispatchResultWithPostInfo {
+		pub fn set_class_info(
+			origin: OriginFor<T>,
+			class: T::ClassType,
+		) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
-
-			if Class::<T>::exists() {
-				return Err(Error::<T>::SetClassDuplicate.into())
-			}
 
 			Class::<T>::put(class);
 			Self::deposit_event(Event::SetClass(class));
 
 			Ok(().into())
 		}
-
-		#[pallet::weight(0)]
-		pub fn set_student_info(
-			origin: OriginFor<T>,
-			student_number: u32,
-			student_name: u128,
-		) -> DispatchResultWithPostInfo {
-			ensure_signed(origin)?;
-
-			if StudentsInfo::<T>::contains_key(student_number) {
-				return Err(Error::<T>::SetStudentsInfoDuplicate.into())
-			}
-
-			StudentsInfo::<T>::insert(&student_number, &student_name);
-			Self::deposit_event(Event::SetStudentInfo(student_number, student_name));
-
-			Ok(().into())
-		}
-
-		#[pallet::weight(0)]
-		pub fn set_dorm_info(
-			origin: OriginFor<T>,
-			dorm_number: u32,
-			bed_number: u32,
-			student_number: u32,
-		) -> DispatchResultWithPostInfo {
-			ensure_signed(origin)?;
-
-			if DormInfo::<T>::contains_key(dorm_number, bed_number) {
-				return Err(Error::<T>::SetDormInfoDuplicate.into())
-			}
-
-			DormInfo::<T>::insert(&dorm_number, &bed_number, &student_number);
-			Self::deposit_event(Event::SetDormInfo(dorm_number, bed_number, student_number));
-
-			Ok(().into())
-		}
 	}
 }
+
 ```
 
 # 1 编写mock runtime
@@ -199,42 +163,19 @@ impl system::Config for Test {
 
 impl pallet_use_test::Config for Test {
 	type Event = Event;
+	type ClassType = u32;
 }
 
-// 初始配置
+pub use frame_support::pallet_prelude::GenesisBuild;
+
 pub fn new_test_ext() -> sp_io::TestExternalities {
-	system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
+	let mut storage = system::GenesisConfig::default().build_storage::<Test>().unwrap().into();
+	let config: pallet_use_test::GenesisConfig<Test> = pallet_use_test::GenesisConfig { class: 2 };
+	config.assimilate_storage(&mut storage).unwrap();
+
+	storage.into()
 }
-```
 
-从上面的代码可以看出，写mock runtime的方式基本上和在runtime/src/lib.rs中加载pallet的写法基本是一样的，只不过在mock runtime中，我们只需要加载我们需要测试的必要的pallet就可以了。另外在配置pallet的时候也只需要能满足测试使用就可以了，而不用配置实际的类型。
-
-# 2 设置genesisconfig
-
-在上面的代码中，我们还创建了一个new_test_ext函数，这个函数中，我们为测试需要的一些pallet进行初始配置，此处我们只需要为System进行默认的配置，在实际的测试情况中，往往需要为被测试的pallet以及相关的pallet提供一些初始设置。现在，我们这里的pallet-use-test还没有genesisConfig。
-
-下面我们为pallet-use-test添加genesisConfig，代码如下：
-```
-	#[pallet::genesis_config]
-	pub struct GenesisConfig {
-		pub class: u32,
-	}
-
-	#[cfg(feature = "std")]
-	impl Default for GenesisConfig {
-		fn default() -> Self {
-			Self {
-				class: 0,
-			}
-		}
-	}
-
-	#[pallet::genesis_build]
-	impl<T: Config> GenesisBuild<T> for GenesisConfig {
-		fn build(&self) {
-			Class::<T>::put(self.class);
-		}
-	}
 ```
 在这个代码中，我们为pallet添加了默认的class，而这个配置在实际使用中，需要在我们的chainspec文件里面配置上此值（配置chainspec涉及到node/src/chainspec.rs和chainspec的json文件，这些内容我们后续再讲，此处我在代码的示例配置了）。
 
