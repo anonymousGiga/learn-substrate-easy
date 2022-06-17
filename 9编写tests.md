@@ -227,3 +227,7 @@ fn test_set_class_info() {
 # 5 参考资料
 
 https://docs.substrate.io/v3/runtime/testing/
+
+# 6 完整源码地址
+
+https://github.com/anonymousGiga/learn-substrate-easy-source/tree/main/substrate-node-template/pallets/use-test
