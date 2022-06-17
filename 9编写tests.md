@@ -13,11 +13,6 @@
 ```
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(test)]
-mod mock;
-
-#[cfg(test)]
-mod tests;
 
 // 1. Imports and Dependencies
 pub use pallet::*;
@@ -67,24 +62,6 @@ pub mod pallet {
 		SetClass(T::ClassType),
 	}
 
-	#[pallet::genesis_config]
-	pub struct GenesisConfig<T: Config> {
-		pub class: T::ClassType,
-	}
-
-	#[cfg(feature = "std")]
-	impl<T: Config> Default for GenesisConfig<T> {
-		fn default() -> Self {
-			Self { class: Default::default() }
-		}
-	}
-
-	#[pallet::genesis_build]
-	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
-		fn build(&self) {
-			Class::<T>::put(self.class);
-		}
-	}
 
 	// 7. Extrinsics
 	// Functions that are callable from outside the runtime.
@@ -169,18 +146,59 @@ impl pallet_use_test::Config for Test {
 pub use frame_support::pallet_prelude::GenesisBuild;
 
 pub fn new_test_ext() -> sp_io::TestExternalities {
+	system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
+}
+
+```
+从上面的代码可以看出，写mock runtime的方式基本上和在runtime/src/lib.rs中加载pallet的写法基本是一样的，只不过在mock runtime中，我们只需要加载我们需要测试的必要的pallet就可以了。另外在配置pallet的时候也只需要能满足测试使用就可以了，而不用配置实际的类型。
+
+
+# 2 设置genesisconfig
+
+在上面的代码中，我们还创建了一个new_test_ext函数，这个函数中，我们为测试需要的一些pallet进行初始配置，此处我们只需要为System进行默认的配置，在实际的测试情况中，往往需要为被测试的pallet以及相关的pallet提供一些初始设置。现在，我们这里的pallet-use-test还没有genesisConfig。
+
+下面我们为pallet-use-test添加genesisConfig，在use-test/sec/lib.rs中添加代码如下：
+```
+	#[pallet::genesis_config]
+	pub struct GenesisConfig<T: Config> {
+		pub class: T::ClassType,
+	}
+
+	#[cfg(feature = "std")]
+	impl<T: Config> Default for GenesisConfig<T> {
+		fn default() -> Self {
+			Self { class: Default::default() }
+		}
+	}
+
+	#[pallet::genesis_build]
+	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
+		fn build(&self) {
+			Class::<T>::put(self.class);
+		}
+	}
+```
+在这个代码中，我们为pallet添加了默认的class，而这个配置在实际使用中，需要在我们的chainspec文件里面配置上此值（配置chainspec涉及到node/src/chainspec.rs和chainspec的json文件，这些内容我们后续再讲，此处我在代码的示例配置了）。
+
+**相应的，我们也需要修改上面mock.rs里面的new_test_ext函数如下：**
+```
+pub fn new_test_ext() -> sp_io::TestExternalities {
 	let mut storage = system::GenesisConfig::default().build_storage::<Test>().unwrap().into();
 	let config: pallet_use_test::GenesisConfig<Test> = pallet_use_test::GenesisConfig { class: 2 };
 	config.assimilate_storage(&mut storage).unwrap();
 
 	storage.into()
 }
-
 ```
-在这个代码中，我们为pallet添加了默认的class，而这个配置在实际使用中，需要在我们的chainspec文件里面配置上此值（配置chainspec涉及到node/src/chainspec.rs和chainspec的json文件，这些内容我们后续再讲，此处我在代码的示例配置了）。
-
+写好mock.rs后，还需要在lib.rs中将其导出，因此在use-test/sec/lib.rs中添加：
+```
+#[cfg(test)]
+mod mock;
+```
 
 # 3 编写测试函数
+
+
 ## 3.1 在测试函数中调用pallet的函数
 
 ## 3.2 在测试函数中使用pallet的存储
