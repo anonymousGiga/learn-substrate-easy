@@ -201,12 +201,22 @@ impl pallet_use_test::Config for Test {
 	type Event = Event;
 }
 
+// 初始配置
 pub fn new_test_ext() -> sp_io::TestExternalities {
 	system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
 }
 ```
 
+从上面的代码可以看出，写mock runtime的方式基本上和在runtime/src/lib.rs中加载pallet的写法基本是一样的，只不过在mock runtime中，我们只需要加载我们需要测试的必要的pallet就可以了。另外在配置pallet的时候也只需要能满足测试使用就可以了，而不用配置实际的类型。
+
 # 2 设置genesisconfig
+
+在上面的代码中，我们还创建了一个new_test_ext函数，这个函数中，我们为测试需要的一些pallet进行初始配置，此处我们只需要为System进行默认的配置，在实际的测试情况中，往往需要为被测试的pallet以及相关的pallet提供一些初始设置。现在，我们这里的pallet-use-test还没有genesisConfig。
+
+为一个pallet添加genesisConfig的方式如下：
+```
+
+```
 
 # 3 编写测试函数
 ## 3.1 在测试函数中调用pallet的函数
