@@ -213,10 +213,31 @@ pub fn new_test_ext() -> sp_io::TestExternalities {
 
 在上面的代码中，我们还创建了一个new_test_ext函数，这个函数中，我们为测试需要的一些pallet进行初始配置，此处我们只需要为System进行默认的配置，在实际的测试情况中，往往需要为被测试的pallet以及相关的pallet提供一些初始设置。现在，我们这里的pallet-use-test还没有genesisConfig。
 
-为一个pallet添加genesisConfig的方式如下：
+下面我们为pallet-use-test添加genesisConfig，代码如下：
 ```
+	#[pallet::genesis_config]
+	pub struct GenesisConfig {
+		pub class: u32,
+	}
 
+	#[cfg(feature = "std")]
+	impl Default for GenesisConfig {
+		fn default() -> Self {
+			Self {
+				class: 0,
+			}
+		}
+	}
+
+	#[pallet::genesis_build]
+	impl<T: Config> GenesisBuild<T> for GenesisConfig {
+		fn build(&self) {
+			Class::<T>::put(self.class);
+		}
+	}
 ```
+在这个代码中，我们为pallet添加了默认的class，而这个配置在实际使用中，需要在我们的chainspec文件里面配置上此值（配置chainspec涉及到node/src/chainspec.rs和chainspec的json文件，这些内容我们后续再讲，此处我在代码的示例配置了）。
+
 
 # 3 编写测试函数
 ## 3.1 在测试函数中调用pallet的函数
