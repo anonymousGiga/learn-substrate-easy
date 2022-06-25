@@ -10,7 +10,7 @@
 针对这两种情况，我们分别来讲解如何编写代码。本节，主要讲第一种情况。
 
 # 先决条件
-编写mock
+编写mock，编写benchmarking时需要的mock和编写tests差不多，甚至是更简单。
 
 # 编写benchmarking
 
