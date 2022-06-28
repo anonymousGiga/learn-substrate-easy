@@ -208,9 +208,75 @@ benchmarks! {
 
 下面我们就来逐步讲解。
 
-编写benchmark以宏benchmarks!包含，里面的内容主要分三部分，做的事情分别是准备条件、调用调度函数、对执行结果验证。对于第一步，其实就是对我们调度函数中的变量进行赋值，详情可以参考
+编写benchmark以宏benchmarks!包含，里面的内容主要分三部分，做的事情分别是准备条件、调用调度函数、对执行结果验证。对于第一步，其实就是对我们调度函数中的变量进行赋值，详情可以参考https://docs.substrate.io/reference/how-to-guides/weights/add-benchmarks/
 
 # 4 添加到runtime中
+首先，还是需要把use-benchmarking这个pallet加到runtime的依赖中，所以在runtime/Cargo.toml中添加如下：
+```
+[dependencies]
+...
+pallet-use-benchmarking = { version = "4.0.0-dev", default-features = false, path = "../pallets/use-benchmarking" }
+...
+
+[features]
+default = ["std"]
+std = [
+	...
+	"pallet-use-benchmarking/std",
+	...
+]
+
+runtime-benchmarks = [
+	...
+	"pallet-use-benchmarking/runtime-benchmarks",
+	...
+]
+
+```
+
+接下来，则是在runtime/src/lib.rs的代码中添加，我们先将use-benchmarking添加到runtime中，添加如下代码：
+```
+impl pallet_use_benchmarking::Config for Runtime {
+	type Event = Event;
+	type StudentNumberType = u32;
+	type StudentNameType = u128;
+}
+
+construct_runtime!(
+	pub enum Runtime where
+		Block = Block,
+		NodeBlock = opaque::Block,
+		UncheckedExtrinsic = UncheckedExtrinsic
+	{
+		System: frame_system,
+		RandomnessCollectiveFlip: pallet_randomness_collective_flip,
+		Timestamp: pallet_timestamp,
+		Aura: pallet_aura,
+		Grandpa: pallet_grandpa,
+		Balances: pallet_balances,
+		TransactionPayment: pallet_transaction_payment,
+		Sudo: pallet_sudo,
+		...
+		//添加下面这行
+		UseBenchmarkingDemo: pallet_use_benchmarking,
+	}
+);
+```
+然后就是将use-benchmarking pallet添加到对应的benchmark宏中，需要添加的代码如下：
+```
+#[cfg(feature = "runtime-benchmarks")]
+mod benches {
+	define_benchmarks!(
+		[frame_benchmarking, BaselineBench::<Runtime>]
+		[frame_system, SystemBench::<Runtime>]
+		[pallet_balances, Balances]
+		[pallet_timestamp, Timestamp]
+		[pallet_template, TemplateModule]
+		//这行为添加的代码
+		[pallet_use_benchmarking, UseBenchmarkingDemo]
+	);
+}
+```
 
 # 5 编译&生成weights.rs文件
 首先时编译，编译的命令需要带上```--features runtime-benchmarks```， 完整的编译命令如下：
