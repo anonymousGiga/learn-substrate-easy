@@ -117,6 +117,24 @@ pub mod pallet {
 # 4 添加到runtime中
 
 # 5 编译&生成weights.rs文件
+首先时编译，编译的命令需要带上```--features runtime-benchmarks```， 完整的编译命令如下：
+```
+cargo build --features runtime-benchmarks
+```
+
+然后就是生成对应的weights文件，生成之前，我们需要从substrate的repo中拷贝模板放到我们的substrate-node-template目录下：
+```
+mkdir .maintain
+cd .maintain
+cp substrate/.maintain/frame-weight-template.hbs .   #此处的substrate同官方的repo仓库
+```
+
+然后就是生成weights文件的命令，如下：
+```
+ ./target/debug/node-template benchmark --chain dev --execution wasm --wasm-execution compiled --pallet pallet_use_benchmarking --extrinsic "*" --steps 20 --repeat 10 --output ./pallets/use-benchmarking/src/weights.rs --template ./.maintain/frame-weight-template.hbs
+```
+
+执行完后就会在```./pallets/use-benchmarking/src/```目录下生成对应的weights.rs文件
 
 # 6 将生成的权重函数应用到pallet中
 
