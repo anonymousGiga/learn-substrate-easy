@@ -110,9 +110,105 @@ pub mod pallet {
 ```
 
 # 2 编写mock代码
-编写mock，编写benchmarking时需要的mock和编写tests差不多，甚至是更简单。
+编写mock，编写benchmarking时需要的mock和之前在use-tests中编写的差不多，我们这里直接贴代码，如下：
+```
+use crate as pallet_template;
+use frame_support::traits::{ConstU16, ConstU64};
+use frame_system as system;
+use sp_core::H256;
+use sp_runtime::{
+	testing::Header,
+	traits::{BlakeTwo256, IdentityLookup},
+};
+
+type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
+type Block = frame_system::mocking::MockBlock<Test>;
+
+// Configure a mock runtime to test the pallet.
+frame_support::construct_runtime!(
+	pub enum Test where
+		Block = Block,
+		NodeBlock = Block,
+		UncheckedExtrinsic = UncheckedExtrinsic,
+	{
+		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
+		TemplateModule: pallet_template::{Pallet, Call, Storage, Event<T>},
+	}
+);
+
+impl system::Config for Test {
+	type BaseCallFilter = frame_support::traits::Everything;
+	type BlockWeights = ();
+	type BlockLength = ();
+	type DbWeight = ();
+	type Origin = Origin;
+	type Call = Call;
+	type Index = u64;
+	type BlockNumber = u64;
+	type Hash = H256;
+	type Hashing = BlakeTwo256;
+	type AccountId = u64;
+	type Lookup = IdentityLookup<Self::AccountId>;
+	type Header = Header;
+	type Event = Event;
+	type BlockHashCount = ConstU64<250>;
+	type Version = ();
+	type PalletInfo = PalletInfo;
+	type AccountData = ();
+	type OnNewAccount = ();
+	type OnKilledAccount = ();
+	type SystemWeightInfo = ();
+	type SS58Prefix = ConstU16<42>;
+	type OnSetCode = ();
+	type MaxConsumers = frame_support::traits::ConstU32<16>;
+}
+
+impl pallet_template::Config for Test {
+	type Event = Event;
+}
+
+// Build genesis storage according to the mock runtime.
+pub fn new_test_ext() -> sp_io::TestExternalities {
+	system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
+}
+```
+
+这里需要注意的是，编写好mock后，我们对其导出，也就是在use-benchmarking/src/lib.rs添加如下代码：
+```
+#[cfg(test)]
+mod mock;
+```
 
 # 3 编写benchmarking
+
+编写benchmarking的目的主要是为调度函数生成对应的权重计算函数，对应到本例子中就主要是use-benchmarking的set_student_info函数生成对应的权重计算函数。我们首先在use-benchmarking/src目录下创建一个文件，名为benchmarking.rs，编写内容如下：
+```
+use super::*;
+
+#[allow(unused)]
+use crate::Pallet as UseBenchmarkingDemo;
+use frame_benchmarking::{benchmarks, whitelisted_caller};
+use frame_system::RawOrigin;
+
+benchmarks! {
+	set_student_info {  //1、准备条件
+		let s in 0 .. 100;
+		let caller: T::AccountId = whitelisted_caller();
+	}:{     //2、调用调度函数
+		let _ = UseBenchmarkingDemo::<T>::set_student_info(RawOrigin::Signed(caller).into(), s.into(), Default::default());
+	}
+	verify {//3、进行验证
+		assert_eq!(<StudentsInfo<T>>::get::<<T as pallet::Config>::StudentNumberType>(s.into()), Default::default());
+	}
+        
+	// 使用mock中的new_test_ext
+	impl_benchmark_test_suite!(UseBenchmarkingDemo, crate::mock::new_test_ext(), crate::mock::Test);
+}
+```
+
+下面我们就来逐步讲解。
+
+编写benchmark以宏benchmarks!包含，里面的内容主要分三部分，做的事情分别是准备条件、调用调度函数、对执行结果验证。对于第一步，其实就是对我们调度函数中的变量进行赋值，详情可以参考
 
 # 4 添加到runtime中
 
