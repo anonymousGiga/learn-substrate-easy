@@ -296,9 +296,73 @@ cp substrate/.maintain/frame-weight-template.hbs .   #此处的substrate同官�
  ./target/debug/node-template benchmark --chain dev --execution wasm --wasm-execution compiled --pallet pallet_use_benchmarking --extrinsic "*" --steps 20 --repeat 10 --output ./pallets/use-benchmarking/src/weights.rs --template ./.maintain/frame-weight-template.hbs
 ```
 
-执行完后就会在```./pallets/use-benchmarking/src/```目录下生成对应的weights.rs文件
+执行完后就会在```./pallets/use-benchmarking/src/```目录下生成对应的weights.rs文件。
+
+至此，我们生成了weights.rs文件，但是这仅仅只是生成，还需要把生成的权重函数用到pallet中，演示demo对应的修改为这个提交（https://github.com/anonymousGiga/learn-substrate-easy-source/commit/8a4131c5f18c3bb769618265dddb41652d89a70b）
 
 # 6 将生成的权重函数应用到pallet中
+接下来我们将权重函数添加到pallet中，演示demo中对应的提交为(https://github.com/anonymousGiga/learn-substrate-easy-source/commit/ce698a63939a8ad1e004c5ced2a1c9222178fb93)。
+
+首先，我们需要在pallets/use-benchmarking/Cargo.toml中添加如下：
+```
+...
+[dependencies]
+...
+//添加下面这行
+sp-std = { default-features = false, version = "4.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.18" }
+
+[features]
+default = ["std"]
+std = [
+	...
+	//添加下面这行
+	"sp-std/std",
+]
+```
+
+接着我们需要在pallets/use-benchmarking/src/lib.rs添加：
+```
+pub mod weights;
+pub use weights::WeightInfo;
+```
+
+然后需要在mod内部添加引入：
+```
+#[frame_support::pallet]
+pub mod pallet {
+	...
+	//添加这行
+	use crate::WeightInfo;
+	...
+}
+```
+
+另外，我们还需要在pallets/use-benchmarking/src/lib.rs中的Config中添加WeightInfo类型，如下：
+```
+	pub trait Config: frame_system::Config {
+		...
+		// 添加这里
+		type WeightInfo: WeightInfo;
+	}
+```
+然后我们需要把调度函数```set_student_info```上方的```#[pallet::weight(100)]```修改成```#[pallet::weight(<T as Config>::WeightInfo::set_student_info((*student_number).into() ))]```。
+
+最后，我们还需要回到runtime/src/lib.rs文件，修改pallet_use_benchmarking的配置，如下：
+```
+impl pallet_use_benchmarking::Config for Runtime {
+	type Event = Event;
+	type StudentNumberType = u32;
+	type StudentNameType = u128;
+	//添加这一行
+	type WeightInfo = pallet_use_benchmarking::weights::SubstrateWeight<Runtime>;
+}
+```
+
+重新编译，pallet的对应的权重就会在新的执行文件中生效，编译命令如下：
+```
+cargo build
+```
+
 
 # 7 参考文档
 https://docs.substrate.io/v3/runtime/benchmarking/
