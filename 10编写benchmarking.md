@@ -9,13 +9,20 @@
 
 针对这两种情况，我们分别来讲解如何编写代码。本节，主要讲第一种情况。
 
-# 先决条件
+# 1 编写pallet业务代码
+
+# 2 编写mock代码
 编写mock，编写benchmarking时需要的mock和编写tests差不多，甚至是更简单。
 
-# 编写benchmarking
+# 3 编写benchmarking
 
+# 4 添加到runtime中
 
-# 参考文档
+# 5 编译&生成weights.rs文件
 
+# 6 参考文档
 https://docs.substrate.io/v3/runtime/benchmarking/
 
+# 7 完整源码参考
+
+https://github.com/anonymousGiga/learn-substrate-easy-source/tree/main/substrate-node-template/pallets/use-benchmarking
