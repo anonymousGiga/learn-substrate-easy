@@ -1,0 +1,2 @@
+# 编写复杂的benchmarking
+上节我们讲了编写benchmarking的基本步骤，也基本上可以满足大部分编写benchmarking的需求。但是在某些情况下，我们还有些稍微复杂的benchmarking的编写，会变得不一样。这里的不一样主要是当你涉及到
